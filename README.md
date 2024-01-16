@@ -26,7 +26,7 @@ integration of all subsystems.<br>
 
 ## **DEMO**
 
-![Demo video](vid/GL_2022_demo_trimmed.mp4)
+<img src="img/GL_2022_demo_trimmed.gif" alt="Execution demo" height="300">
 
 
 ## **INSTALLATION STEPS**
