@@ -24,6 +24,11 @@ integration of all subsystems.<br>
 
 <img src="img/Overall-system.jpg" alt="Overview of the system" height="300">
 
+## **DEMO**
+
+![Demo video](vid/GL_2022_demo_trimmed.mp4)
+
+
 ## **INSTALLATION STEPS**
 <!-- To install DexNet 2.0, clone the repo from the <a href="">original website</a>. -->
 
