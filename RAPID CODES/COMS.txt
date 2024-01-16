@@ -1,0 +1,21 @@
+
+
+FUNC robtarget StringToTarget(string value)
+VAR robtarget tempTarget;
+VAR bool bResult;
+
+VAR dnum posX;
+VAR dnum posY;
+VAR dnum posZ;
+
+VAR dnum Q1;
+VAR dnum Q2;
+VAR dnum Q3;
+VAR dnum Q4;
+
+VAR dnum CF1;
+VAR dnum CF2;
+VAR dnum CF3;
+VAR dnum CF4;
+
+

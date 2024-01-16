@@ -1,0 +1,115 @@
+MODULE Routine_with_String
+! Socket related variables
+VAR socketdev serverSocket;
+VAR socketdev clientSocket;
+VAR bool listen := TRUE;
+
+! FORMAT: "x,y,z,q1,q2,q3,q4,cf1,cf4,cf6,cfx," 
+VAR string data:="0.2,0.3,0.2,1,0,0,0,0,0,0,0,";
+VAR robTarget objTarget;
+
+PROC main()
+
+! -- CODE FOR SOCKET SERVER GO HERE ---
+SocketCreate serverSocket;
+SocketBind serverSocket, "192.168.0.2", 1025;
+SocketListen serverSocket;
+
+WHILE listen DO
+! Waiting for python client request for communication
+SocketAccept serverSocket, clientSocket, \Time:=WAIT_MAX;
+
+! Receive data from python
+SocketReceive clientSocket \Str:=data;
+
+TPWrite "Received data from Python: " + data;
+SocketSend clientSocket \Str:="Received";
+objTarget:=StringToTarget(data);
+! -- ROBOT TASKS GO DOWN HERE -- 
+MoveL objTarget, v100, z50, TGripR;
+WaitTime 1;
+
+TPWrite "Task completed";
+SocketSend clientSocket \Str:= "TASK DONE";
+SocketClose clientSocket;
+
+ENDWHILE
+SocketClose serverSocket;
+
+! ------------ERROR HANDLING CODE STARTS ----------------
+ERROR
+IF ERRNO=ERR_SOCK_TIMEOUT THEN
+TPWrite "Retrying to bind...";
+RETRY;
+ELSEIF ERRNO=ERR_SOCK_CLOSED THEN
+! If Socket not closed properly then:
+SocketClose serverSocket;
+SocketClose clientSocket;
+
+SocketCreate serverSocket;
+SocketBind serverSocket, "192.168.0.2", 1025;
+SocketListen serverSocket;
+SocketAccept serverSocket, clientSocket, \Time:=WAIT_MAX;
+RETRY;
+ELSE 
+TPWrite "ERRNO = "\Num:=ERRNO;
+Stop;
+ENDIF
+! ------------ERROR HANDLING CODE ENDS ----------------
+ENDPROC
+
+FUNC robtarget StringToTarget(string value)
+VAR robtarget tempTarget;
+VAR bool bResult;
+
+VAR num posX;
+VAR num posY;
+VAR num posZ;
+
+VAR num Q1;
+VAR num Q2;
+VAR num Q3;
+VAR num Q4;
+
+VAR num CF1;
+VAR num CF2;
+VAR num CF3;
+VAR num CF4;
+
+! Finding split positions
+posX := StrFind(value,1,",");
+posY := StrFind(value, posX+1,",");
+posZ := StrFind(value, posY+1,",");
+
+Q1 := StrFind(value, posZ+1,",");
+Q2 := StrFind(value, Q1+1,",");
+Q3 := StrFind(value, Q2+1,",");
+Q4 := StrFind(value, Q3+1,",");
+
+CF1 := StrFind(value, Q4+1,",");
+CF2 := StrFind(value, CF1+1,",");
+CF3 := StrFind(value, CF2+1,",");
+CF4 := StrFind(value, CF3+1,",");
+
+! Read strings and store in tempTarget (robTarget dtype) - StrPart (Str ChPos Len)
+! position
+bResult:=StrToVal(StrPart(value,1,posX-1),tempTarget.trans.x);
+bResult:=StrToVal(StrPart(value,posX+1,posY-posX-1),tempTarget.trans.y);
+bResult:=StrToVal(StrPart(value,posY+1,posZ-posY-1),tempTarget.trans.z);
+! orientation
+bResult:=StrToVal(StrPart(value,posZ+1,Q1-posZ-1),tempTarget.rot.q1);
+bResult:=StrToVal(StrPart(value,Q1+1, Q2-Q1-1),tempTarget.rot.q2);
+bResult:=StrToVal(StrPart(value,Q2+1, Q3-Q2-1),tempTarget.rot.q3);
+bResult:=StrToVal(StrPart(value,Q3+1, Q4-Q3-1),tempTarget.rot.q4);
+! config data
+bResult:=StrToVal(StrPart(value,Q4+1, CF1-Q4-1),tempTarget.rot.cf1);
+bResult:=StrToVal(StrPart(value,CF1+1, CF2-CF1-1),tempTarget.rot.cf4);
+bResult:=StrToVal(StrPart(value,CF2+1, CF3-CF2-1),tempTarget.rot.cf6);
+bResult:=StrToVal(StrPart(value,CF3+1, CF4-CF3-1),tempTarget.rot.cfx);
+
+RETURN tempTarget;
+ENDFUNC
+
+ENDMODULE
+
+

@@ -1,0 +1,73 @@
+%%%
+  VERSION:1
+  LANGUAGE:ENGLISH
+%%%
+
+MODULE TCP_ValuesZYX
+  VAR num anglex;
+  VAR num angley;
+  VAR num anglez;
+  VAR num nFKAnswer;
+  PERS orient orient2:=[0.707107,0,-0.707107,0];
+
+  PROC convert_toZYX()
+    anglex:=EulerZYX(\X,orient2);
+    angley:=EulerZYX(\Y,orient2);
+    anglez:=EulerZYX(\Z,orient2);
+  ENDPROC
+
+  PROC query_tcp()
+    VAR num q1;
+    VAR num q2;
+    VAR num q3;
+    VAR num q4;
+
+    TPReadNum q1,"Please enter the value for q1";
+    TPReadNum q2,"Please enter the value for q2";
+    TPReadNum q3,"Please enter the value for q3";
+    TPReadNum q4,"Please enter the value for q4";
+    orient2.q1:=q1;
+    orient2.q2:=q2;
+    orient2.q3:=q3;
+    orient2.q4:=q4;
+    convert_toZYX;
+    TPWrite "The Euler angle x is "\Num:=anglex;
+    TPWrite "The Euler angle y is "\Num:=angley;
+    TPWrite "The Euler angle z is "\Num:=anglez;
+    TPWrite "Thanks for using Lee Justice's";
+    TPWrite "program. :>)";
+    TPWrite "Have a great day";
+    TPReadFK nFKAnswer,"Press OK to finish",stEmpty,stEmpty,stEmpty,stEmpty,"OK";
+  ENDPROC
+ENDMODULE</code>%%%
+  VERSION:1
+  LANGUAGE:ENGLISH
+%%%
+
+MODULE TCP_adjust
+  VAR orient orient1:=[1,0,0,0];
+
+  PROC tcp_orient()
+    VAR num anglex;
+    VAR num angley;
+    VAR num anglez;
+    VAR num nFKAnswer;
+
+    TPWrite "This routine is use to calculate";
+    TPWrite "The quaternions based upon EulerZYX";
+    TPWrite "angles.";
+    TPWrite "Remember EulerZYX goes Z rotation,";
+    TPWrite "Then Y rotation,";
+    TPWrite "and then X rotation";
+    TPReadNum anglex,"Please enter the value for x rotation";
+    TPReadNum angley,"Please enter the value for y rotation";
+    TPReadNum anglez,"Please enter the value for z rotation";
+    orient1:=OrientZYX(anglez,angley,anglex);
+    TPWrite "Based upon your inputs,";
+    TPWrite "Quaternion 1 is "\Num:=orient1.q1;
+    TPWrite "Quaternion 2 is "\Num:=orient1.q2;
+    TPWrite "Quaternion 3 is "\Num:=orient1.q3;
+    TPWrite "Quaternion 4 is "\Num:=orient1.q4;
+    TPReadFK nFKAnswer,"Press OK to Finish",stEmpty,stEmpty,stEmpty,stEmpty,"OK";
+  ENDPROC
+ENDMODULE</pre><div><br><pre class="CodeBlock"><code>
