@@ -22,7 +22,7 @@ integration of all subsystems.<br>
 
 **Keywords**: manipulation, grasp localization, robot control, computer vision
 
-<img src="img/Overall-system.jpg" alt="Overview of the system" height="300">
+<img src="img/Overall-system.jpg" alt="Overview of the system" height="500">
 
 ## **DEMO**
 
